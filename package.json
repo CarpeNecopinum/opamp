@@ -1,0 +1,41 @@
+{
+	"name": "opamp",
+	"private": true,
+	"version": "0.0.1",
+	"type": "module",
+	"scripts": {
+		"dev": "vite dev",
+		"build": "vite build",
+		"preview": "vite preview",
+		"prepare": "svelte-kit sync || echo ''",
+		"check": "svelte-kit sync && svelte-check --tsconfig ./tsconfig.json",
+		"check:watch": "svelte-kit sync && svelte-check --tsconfig ./tsconfig.json --watch",
+		"migrate": "node-pg-migrate",
+		"migrate:up": "node-pg-migrate up",
+		"migrate:down": "node-pg-migrate down",
+		"migrate:redo": "node-pg-migrate redo",
+		"migrate:create": "node-pg-migrate create -j sql"
+	},
+	"devDependencies": {
+		"@sveltejs/adapter-auto": "^8.0.0",
+		"@sveltejs/kit": "^3.0.0",
+		"@sveltejs/vite-plugin-svelte": "^7.2.0",
+		"@types/pg": "^8.23.1",
+		"dotenv": "^18.0.5",
+		"node-pg-migrate": "^9.0.0",
+		"pg": "^8.23.1",
+		"svelte": "^5.57.1",
+		"svelte-check": "^4.6.0",
+		"typescript": "^6.0.3",
+		"vite": "^8.3.0"
+	},
+	"imports": {
+		"#lib": "./src/lib/index.ts",
+		"#lib/*": "./src/lib/*"
+	},
+	"dependencies": {
+		"@slonik/pg-driver": "^49.10.10",
+		"slonik": "^49.10.10",
+		"zod": "^4.6.5"
+	}
+}
