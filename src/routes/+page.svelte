@@ -1,45 +1,78 @@
 <script lang="ts">
-	import { page } from '$app/state';
-
-	let title = $state('');
-	let body = $state('');
-
-	const notes = $derived(page.data.notes);
-	const dbUnavailable = $derived(page.data.dbUnavailable);
+	import { asset } from '$app/paths';
 </script>
 
 <svelte:head>
-	<title>opamp</title>
+	<title>opamp – Feedback-Plattform</title>
 </svelte:head>
 
-<main>
-	<h1>opamp</h1>
+<header class="site-header">
+	<div class="container site-header-inner">
+		<a href="/" class="brand" aria-label="opamp – Startseite">
+			<img src={asset('opamp-logo.svg')} alt="" class="logo logo-light" />
+			<img src={asset('opamp-logo-dark.svg')} alt="" class="logo logo-dark" />
+		</a>
+		<a href="/anmeldung">Verwaltung</a>
+	</div>
+</header>
 
-	{#if dbUnavailable}
-		<p class="warning">
-			Database unavailable — check <code>DATABASE_URL</code> and run <code>npm run migrate:up</code>.
+<main class="container" style="max-width: 560px">
+	<h1>Feedback-Plattform</h1>
+
+	<div class="card">
+		<p>
+			Diese Plattform dient der Durchführung von Umfragen. An Umfragen kann ohne Anmeldung
+			teilgenommen werden – du benötigst dafür den persönlichen Link zu einer Umfrage.
 		</p>
-	{/if}
-
-	<form method="POST" action="?/create">
-		<input name="title" placeholder="Title" bind:value={title} required />
-		<textarea name="body" placeholder="Body (optional)" bind:value={body}></textarea>
-		<button type="submit">Add note</button>
-	</form>
-
-	{#if page.form?.error}
-		<p class="error">{page.form.error}</p>
-	{/if}
-
-	<ul>
-		{#each notes as note (note.id)}
-			<li>
-				<strong>{note.title}</strong>
-				{#if note.body}<span>{note.body}</span>{/if}
-				<time>{new Date(note.createdAt).toLocaleString()}</time>
-			</li>
-		{:else}
-			<li>No notes yet.</li>
-		{/each}
-	</ul>
+		<p class="muted">
+			Umfragen verwalten? <a href="/anmeldung">Zur Verwaltung</a>
+		</p>
+	</div>
 </main>
+
+<style>
+	.site-header {
+		background: var(--surface);
+		border-bottom: 1px solid var(--border);
+	}
+
+	.site-header-inner {
+		display: flex;
+		align-items: center;
+		justify-content: space-between;
+		padding-top: 0.75rem;
+		padding-bottom: 0.75rem;
+	}
+
+	.brand {
+		font-weight: 700;
+		font-size: 1.1rem;
+		display: flex;
+		align-items: center;
+		gap: 0.5rem;
+		color: var(--text);
+	}
+
+	.brand:hover {
+		text-decoration: none;
+	}
+
+	.logo {
+		height: 2.4rem;
+		width: auto;
+		display: block;
+		border-radius: 6px;
+	}
+
+	.logo-dark {
+		display: none;
+	}
+
+	:global([data-theme='dark']) .logo-light {
+		display: none;
+	}
+
+	:global([data-theme='dark']) .logo-dark {
+		display: block;
+	}
+</style>

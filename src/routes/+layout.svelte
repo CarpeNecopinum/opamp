@@ -1,12 +1,16 @@
 <script lang="ts">
-	import favicon from '#lib/assets/favicon.svg';
-	import type { LayoutProps } from './$types';
+	import "../app.css";
+	import { asset } from "$app/paths";
+	import ThemeToggle from "#lib/components/ThemeToggle.svelte";
+	import type { LayoutProps } from "./$types";
 
 	let { children }: LayoutProps = $props();
 </script>
 
 <svelte:head>
-	<link rel="icon" href={favicon} />
+	<link rel="icon" href={asset("opamp-logo.svg")} type="text/xml+svg" />
 </svelte:head>
 
 {@render children()}
+
+<ThemeToggle />

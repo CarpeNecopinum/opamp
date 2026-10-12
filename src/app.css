@@ -1,0 +1,241 @@
+:root {
+	color-scheme: light;
+	--bg: #f6f7f9;
+	--surface: #ffffff;
+	--border: #d9dee5;
+	--text: #1c2430;
+	--muted: #5d6b7a;
+	--accent: #2f6fed;
+	--accent-dark: #1f56c4;
+	--accent-soft: #e7effd;
+	--danger: #c92a2a;
+	--ok: #2b8a3e;
+	--radius: 8px;
+}
+
+[data-theme='dark'] {
+	color-scheme: dark;
+	--bg: #14181f;
+	--surface: #1e242e;
+	--border: #333d4b;
+	--text: #e6ecf3;
+	--muted: #9aa6b5;
+	--accent: #6a97f2;
+	--accent-dark: #87adf5;
+	--accent-soft: #24304a;
+	--danger: #e5484d;
+	--ok: #4cae5b;
+}
+
+[data-theme='dark'] .badge.aktiv {
+	background: #1f3a24;
+	color: #7ede8e;
+}
+
+[data-theme='dark'] .badge.bevorstehend {
+	background: #3d3416;
+	color: #f2d06b;
+}
+
+[data-theme='dark'] .badge.beendet {
+	background: #2a313b;
+	color: var(--muted);
+}
+
+[data-theme='dark'] .error-message {
+	background: #3b1d1f;
+	color: #ff8789;
+	border-color: #57393b;
+}
+
+[data-theme='dark'] .success-message {
+	background: #1d3324;
+	color: #8ce0a0;
+	border-color: #2c4d38;
+}
+
+* {
+	box-sizing: border-box;
+}
+
+body {
+	margin: 0;
+	font-family:
+		system-ui,
+		-apple-system,
+		'Segoe UI',
+		Roboto,
+		sans-serif;
+	background: var(--bg);
+	color: var(--text);
+	line-height: 1.5;
+}
+
+a {
+	color: var(--accent);
+	text-decoration: none;
+}
+
+a:hover {
+	text-decoration: underline;
+}
+
+h1 {
+	font-size: 1.6rem;
+	margin: 0 0 1rem;
+}
+
+h2 {
+	font-size: 1.2rem;
+	margin: 1.5rem 0 0.75rem;
+}
+
+label {
+	display: block;
+	font-weight: 500;
+	margin-bottom: 0.25rem;
+}
+
+input[type='text'],
+input[type='password'],
+input[type='datetime-local'],
+input:not([type]),
+textarea,
+select {
+	width: 100%;
+	padding: 0.5rem 0.65rem;
+	border: 1px solid var(--border);
+	border-radius: var(--radius);
+	font: inherit;
+	background: var(--surface);
+}
+
+textarea {
+	min-height: 90px;
+	resize: vertical;
+}
+
+button {
+	padding: 0.5rem 1rem;
+	border: 1px solid var(--accent);
+	border-radius: var(--radius);
+	background: var(--accent);
+	color: #fff;
+	font: inherit;
+	cursor: pointer;
+}
+
+button:hover {
+	background: var(--accent-dark);
+}
+
+button.secondary {
+	background: var(--surface);
+	color: var(--text);
+	border-color: var(--border);
+}
+
+button.secondary:hover {
+	background: var(--bg);
+}
+
+button.danger {
+	background: var(--danger);
+	border-color: var(--danger);
+}
+
+button.danger:hover {
+	background: #a61e1e;
+}
+
+button:disabled {
+	opacity: 0.6;
+	cursor: not-allowed;
+}
+
+table {
+	width: 100%;
+	border-collapse: collapse;
+	background: var(--surface);
+	border: 1px solid var(--border);
+	border-radius: var(--radius);
+}
+
+th,
+td {
+	text-align: left;
+	padding: 0.6rem 0.75rem;
+	border-bottom: 1px solid var(--border);
+}
+
+th {
+	font-size: 0.85rem;
+	text-transform: uppercase;
+	letter-spacing: 0.03em;
+	color: var(--muted);
+}
+
+tr:last-child td {
+	border-bottom: none;
+}
+
+.card {
+	background: var(--surface);
+	border: 1px solid var(--border);
+	border-radius: var(--radius);
+	padding: 1rem 1.25rem;
+	margin-bottom: 1rem;
+}
+
+.badge {
+	display: inline-block;
+	padding: 0.1rem 0.55rem;
+	border-radius: 999px;
+	font-size: 0.8rem;
+	font-weight: 600;
+}
+
+.badge.aktiv {
+	background: #d3f9d8;
+	color: var(--ok);
+}
+
+.badge.bevorstehend {
+	background: #fff3bf;
+	color: #997a00;
+}
+
+.badge.beendet {
+	background: #e9ecef;
+	color: var(--muted);
+}
+
+.error-message {
+	background: #ffe3e3;
+	color: var(--danger);
+	border: 1px solid #ffc9c9;
+	border-radius: var(--radius);
+	padding: 0.6rem 0.9rem;
+	margin: 0.75rem 0;
+	white-space: pre-line;
+}
+
+.success-message {
+	background: #d3f9d8;
+	color: var(--ok);
+	border: 1px solid #b2f2bb;
+	border-radius: var(--radius);
+	padding: 0.6rem 0.9rem;
+	margin: 0.75rem 0;
+}
+
+.muted {
+	color: var(--muted);
+	font-size: 0.9rem;
+}
+
+.container {
+	max-width: 860px;
+	margin: 0 auto;
+	padding: 1.5rem 1rem 4rem;
+}

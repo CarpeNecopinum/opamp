@@ -1,0 +1,11 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 120 120" width="120" height="120" role="img" aria-label="Operational amplifier with positive feedback">
+  <!-- colors tuned for dark-mode backgrounds -->
+  <g fill="none" stroke-linecap="round" stroke-linejoin="round">
+    <circle cx="10" cy="24" r="3.5" fill="#94a3b8"/>
+    <path d="M10 24H40" stroke="#94a3b8" stroke-width="6"/>
+    <path d="M45 24H55M45 56H55M50 51V61" stroke="#e2e8f0" stroke-width="3"/>
+    <path d="M92 40H108V88H72M72 88 68 81 60 95 56 88M56 88H18V56H40" stroke="#fbbf24" stroke-width="6"/>
+    <path d="M40 6V74L92 40Z" stroke="#e2e8f0" stroke-width="6"/>
+  </g>
+  <text x="60" y="112" text-anchor="middle" font-family="ui-sans-serif,system-ui,Helvetica,Arial,sans-serif" font-weight="700" font-size="20" letter-spacing="1" fill="#e2e8f0">opamp</text>
+</svg>
