@@ -16,13 +16,14 @@ kind: agents
 
 - PostgreSQL via [Slonik](https://github.com/gajus/slonik) with the `@slonik/pg-driver` driver factory — see `src/lib/server/db.ts` (shared lazy pool, get it with `getPool()`)
 - Always write raw SQL with the `sql` tagged template; never concatenate user input into queries
-- Always validate query results with `sql.type(<zod schema>)` and inputs with zod schemas; never use `sql.unsafe` in app code
+- Always type query results with `sql.type(<zod schema>)` and validate inputs with zod schemas; never use `sql.unsafe` in app code. **Note:** in Slonik v49 `sql.type` no longer validates results at runtime — the zod schema is typing/documentation only, so do not rely on it for runtime validation
+- Slonik's default `int8` parser returns BigInt (`1n`), which breaks comparisons/Map lookups against numbers — `src/lib/server/db.ts` overrides it to parse 64-bit ids as plain numbers; keep that override when touching pool config
 - Connection string comes from the `DATABASE_URL` env var (declared in `src/env.ts`, defaults to `postgres://postgres@localhost:5432/opamp`)
 
 ## Migrations
 
 - Migrations are **plain SQL files** in `migrations/`, run with node-pg-migrate
-- Each `.sql` file contains `-- Up Migration` and `-- Down Migration` marker sections (see `migrations/20261006000000_create_notes.sql`)
+- Each `.sql` file contains `-- Up Migration` and `-- Down Migration` marker sections (see `migrations/20261006120000_survey_platform.sql`)
 - Create new migrations with `npm run migrate:create <name> -j sql` — never write migrations as JavaScript/TypeScript builder code
 - Apply with `npm run migrate:up`, revert with `npm run migrate:down`
 
@@ -31,6 +32,8 @@ kind: agents
 - `npm run dev` — dev server
 - `npm run check` — typecheck (`svelte-check`); run before committing
 - `npm run migrate:up` — apply pending migrations
+- `npm run setup` — create the first `root` admin (interactive-free: `--username`/`--password` args, random password by default; refuses when users already exist)
+- `npm run test` — Playwright e2e tests (start their own dev server on port 4173 against the `opamp_test` database; run `npx playwright install chromium` first on a fresh machine)
 - Use `npm` as the package manager
 
 ## Conventions
