@@ -39,17 +39,21 @@
 	</div>
 	<p class="muted">Scanne den QR-Code mit deinem Smartphone.</p>
 	<code class="link">{link}</code>
-	<div class="actions">
-		<button type="button" onclick={toggleFullscreen}>
-			{fullscreen ? 'Vollbild beenden' : 'Vollbild'}
-		</button>
-		<a href="/admin/umfragen/{survey.id}" class="back">← Zurück zur Umfrage</a>
-	</div>
+	{#if !fullscreen}
+		<div class="actions">
+			<button type="button" onclick={toggleFullscreen}>Vollbild</button>
+			<a href="/admin/umfragen/{survey.id}" class="back">← Zurück zur Umfrage</a>
+		</div>
+	{/if}
 </div>
 
 <style>
-	/* The slide is a presentation view: break out of the container width. */
-	:global(main.container) {
+	/*
+	 * The slide is a presentation view: break out of the container width.
+	 * Scoped via :has so the rule — which hover preloading injects on every
+	 * page — only matches while this slide is actually rendered.
+	 */
+	:global(main.container:has(.slide)) {
 		max-width: none;
 	}
 
