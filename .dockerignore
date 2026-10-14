@@ -1,0 +1,8 @@
+.env
+.env.example
+.agents
+.svelte-kit
+.vscode
+node_modules
+test-results
+tests

@@ -16,11 +16,13 @@
 		"migrate:redo": "node-pg-migrate redo",
 		"migrate:create": "node-pg-migrate create -j sql",
 		"setup": "tsx scripts/setup.ts",
-		"test": "playwright test"
+		"test": "playwright test",
+		"serve": "node build"
 	},
 	"devDependencies": {
 		"@playwright/test": "^1.64.0",
 		"@sveltejs/adapter-auto": "^8.0.0",
+		"@sveltejs/adapter-node": "^6.0.0",
 		"@sveltejs/kit": "^3.0.0",
 		"@sveltejs/vite-plugin-svelte": "^7.2.0",
 		"@types/pg": "^8.23.1",

@@ -1,0 +1,27 @@
+services:
+    app:
+        build: .
+        restart: unless-stopped
+        container_name: opamp
+        environment:
+            DATABASE_URL: postgres://opamp:TLYxfLGDsXafO9gcbuwMI4kJ1gIIGdSn@postgres:5432/opamp
+        networks:
+            - caddy
+            - default
+
+    postgres:
+        image: postgres:18-alpine
+        restart: unless-stopped
+        environment:
+            POSTGRES_DB: opamp
+            POSTGRES_USER: opamp
+            POSTGRES_PASSWORD: TLYxfLGDsXafO9gcbuwMI4kJ1gIIGdSn
+        networks:
+            - default
+
+volumes:
+    pg-data:
+networks:
+    default:
+    caddy:
+        external: true
