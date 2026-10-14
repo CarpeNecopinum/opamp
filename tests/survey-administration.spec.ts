@@ -118,13 +118,16 @@ test.describe('survey administration', () => {
 		await submitResponse(page);
 		await page.waitForURL(/danke/);
 
-		// Duplicate via the surveys overview.
+		// Duplicate via the surveys overview (dialog, explicit confirmation).
 		await login(page);
 		await page.goto('/admin');
+		await waitForHydration(page);
 		await page
 			.locator('tr', { hasText: 'Original-Umfrage' })
 			.getByRole('link', { name: 'Duplizieren' })
 			.click();
+		await page.fill('#duplicate-name', 'Original-Umfrage (Kopie)');
+		await page.getByRole('button', { name: 'Kopie erstellen' }).click();
 		await page.waitForURL(/\/admin\/umfragen\/\d+$/);
 
 		// The copy acts like a fresh survey.

@@ -33,7 +33,7 @@ kind: agents
 - `npm run check` — typecheck (`svelte-check`); run before committing
 - `npm run migrate:up` — apply pending migrations
 - `npm run setup` — create the first `root` admin (interactive-free: `--username`/`--password` args, random password by default; refuses when users already exist)
-- `npm run test` — Playwright e2e tests (start their own dev server on port 4173 against the `opamp_test` database; run `npx playwright install chromium` first on a fresh machine)
+- `npm run test` — Playwright e2e tests (start their own dev server on port 4173 against a separate test database `test_opamp`, created on the configured `DATABASE_URL` server and never touching other databases; set `TEST_DB_SUFFIX` to isolate concurrent runs — suffixed databases are dropped at teardown; run `npx playwright install chromium` first on a fresh machine)
 - Use `npm` as the package manager
 
 ## Conventions

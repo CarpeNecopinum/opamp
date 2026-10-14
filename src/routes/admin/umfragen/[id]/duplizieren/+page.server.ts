@@ -1,26 +1,48 @@
-import { error, redirect } from '@sveltejs/kit';
+import { error, fail, redirect } from '@sveltejs/kit';
+import { z } from 'zod';
 import { surveyTitleSchema } from '#lib/schemas.ts';
 import { duplicateSurvey, getSurvey } from '#lib/server/surveys.ts';
-import type { PageServerLoad } from './$types';
+import type { Actions, PageServerLoad } from './$types';
 
-// Duplication is triggered from the surveys overview: the "Duplizieren" link
-// opens a dialog asking for a name, which then navigates here with
-// ?title=... The load function mutates, so links to this route must set
-// data-sveltekit-preloaddata="off" to avoid duplicates on hover.
-export const load: PageServerLoad = async ({ params, url, locals }) => {
+/**
+ * No mutation in load: duplication happens only via the POST action below,
+ * after the name was explicitly confirmed (dialog in the overview or the
+ * form on this page). Never duplicate on GET — hover preloading and
+ * prefetching would otherwise create copies.
+ */
+export const load: PageServerLoad = async ({ params, locals }) => {
 	const id = Number(params.id);
 	if (!Number.isInteger(id)) error(404, 'Umfrage nicht gefunden');
 
-	const survey = await getSurvey(id, { createdBy: locals.user!.id });
+	const user = locals.user!;
+	const survey = await getSurvey(id, user.role === 'root' ? {} : { createdBy: user.id });
 	if (!survey) error(404, 'Umfrage nicht gefunden');
 
-	// Direct visits without the dialog fall back to the previous default name.
-	const parsed = surveyTitleSchema.safeParse(
-		url.searchParams.get('title') ?? `${survey.title} (Kopie)`
-	);
-	const title = parsed.success ? parsed.data : `${survey.title} (Kopie)`.slice(0, 200);
+	return { title: survey.title, defaultName: `${survey.title} (Kopie)`.slice(0, 200) };
+};
 
-	const newId = await duplicateSurvey(id, locals.user!.id, title);
+export const actions: Actions = {
+	default: async ({ params, request, locals }) => {
+		const id = Number(params.id);
+		if (!Number.isInteger(id)) {
+			return fail(404, { error: 'Umfrage nicht gefunden.' });
+		}
 
-	redirect(303, `/admin/umfragen/${newId}`);
+		const user = locals.user!;
+		const survey = await getSurvey(id, user.role === 'root' ? {} : { createdBy: user.id });
+		if (!survey) {
+			return fail(404, { error: 'Umfrage nicht gefunden.' });
+		}
+
+		const data = await request.formData();
+
+		const parsed = surveyTitleSchema.safeParse(String(data.get('title') ?? ''));
+		if (!parsed.success) {
+			return fail(400, { error: z.prettifyError(parsed.error) });
+		}
+
+		const newId = await duplicateSurvey(id, user.id, parsed.data);
+
+		redirect(303, `/admin/umfragen/${newId}`);
+	}
 };
