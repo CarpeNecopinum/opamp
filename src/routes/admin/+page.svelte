@@ -64,10 +64,10 @@
 					·
 					<a
 						href="/admin/umfragen/{survey.id}/duplizieren"
-						data-sveltekit-preloaddata="off"
+						data-sveltekit-preload-data="off"
 						onclick={(event) => {
 							// Ask for a name before creating the copy; the plain
-							// href stays as a no-JS fallback.
+							// href stays as a fallback rendering the form page.
 							event.preventDefault();
 							openDuplicateDialog(survey.id, survey.title);
 						}}>Duplizieren</a
@@ -81,7 +81,7 @@
 
 <dialog bind:this={duplicateDialog} class="name-dialog">
 	{#if duplicateSurveyId !== null}
-		<form method="GET" action="/admin/umfragen/{duplicateSurveyId}/duplizieren">
+		<form method="POST" action="/admin/umfragen/{duplicateSurveyId}/duplizieren">
 			<h3>Umfrage duplizieren</h3>
 			<p class="muted">
 				„{duplicateSurveyTitle}“ wird mit neuem Zeitraum (7 Tage ab jetzt) und ohne Antworten

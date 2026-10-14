@@ -1,4 +1,5 @@
 <script lang="ts">
+	import QrCode from '#lib/components/QrCode.svelte';
 	import SurveyForm from '#lib/components/SurveyForm.svelte';
 	import { formatDateTime } from '#lib/format.ts';
 	import { toDateTimeLocalValue } from '#lib/format.ts';
@@ -9,6 +10,7 @@
 
 	const survey = $derived(data.survey);
 	const editable = $derived(data.editable);
+	const participantLink = $derived(`${page.url.origin}/umfrage/${survey.token}`);
 
 	const initial = $derived({
 		title: survey.title,
@@ -43,10 +45,18 @@
 		Diesen Link an Teilnehmende verteilen – er ist praktisch nicht erratbar und enthält keine
 		Anmeldedaten.
 	</p>
-	<code class="survey-link">{page.url.origin}/umfrage/{survey.token}</code>
-	<p style="margin-top: 0.75rem">
-		<a href="/umfrage/{survey.token}" target="_blank"><button type="button" class="secondary">Vorschau öffnen</button></a>
-	</p>
+	<div class="link-and-qr">
+		<div class="link-col">
+			<code class="survey-link">{participantLink}</code>
+			<p class="link-actions">
+				<a href="/umfrage/{survey.token}" target="_blank"><button type="button" class="secondary">Vorschau öffnen</button></a>
+				<a href="/admin/umfragen/{survey.id}/qr"><button type="button" class="secondary">QR-Vollbild öffnen</button></a>
+			</p>
+		</div>
+		<div class="qr-box">
+			<QrCode value={participantLink} label="Teilnehmer-Link" />
+		</div>
+	</div>
 </div>
 
 {#if page.form?.error}
@@ -76,6 +86,30 @@
 </form>
 
 <style>
+	.link-and-qr {
+		display: flex;
+		gap: 1.25rem;
+		align-items: flex-start;
+		flex-wrap: wrap;
+	}
+
+	.link-col {
+		flex: 1;
+		min-width: 260px;
+	}
+
+	.qr-box {
+		width: 150px;
+		flex-shrink: 0;
+	}
+
+	.link-actions {
+		display: flex;
+		gap: 0.5rem;
+		margin-top: 0.75rem;
+		flex-wrap: wrap;
+	}
+
 	.survey-link {
 		display: block;
 		padding: 0.5rem 0.65rem;
