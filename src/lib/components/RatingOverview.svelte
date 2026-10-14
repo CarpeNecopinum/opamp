@@ -153,9 +153,11 @@
 </div>
 
 <p class="muted legend">
-	Linie = Median, roter Punkt = Mittelwert,
-	{mode === 'box' ? 'Box = mittlere 50 % der Antworten' : 'Fläche = Verteilung der Antworten'}
-	– Frage anklicken für Histogramm und Details.
+	<span>
+		Linie = Median, roter Punkt = Mittelwert,
+		{mode === 'box' ? 'Box = mittlere 50 % der Antworten' : 'Fläche = Verteilung der Antworten'}.
+	</span>
+	<span class="hint">Frage anklicken für Histogramm und Details.</span>
 </p>
 
 <style>
@@ -301,5 +303,45 @@
 	.legend {
 		margin: 0.5rem 0 0;
 		font-size: 0.8rem;
+	}
+
+	/*
+	 * Print: the combined plot stays; labels print as plain text with the
+	 * full prompt, without highlights, arrow or the click hint.
+	 */
+	@media print {
+		.overview {
+			break-inside: avoid;
+		}
+
+		.row-label {
+			height: auto;
+			padding: 0.25rem 0.5rem;
+			background: none;
+			color: inherit;
+		}
+
+		.row-label span {
+			-webkit-line-clamp: unset;
+			line-clamp: unset;
+			overflow: visible;
+		}
+
+		.row-label::after {
+			display: none;
+		}
+
+		.row-label.selected {
+			background: none;
+			font-weight: 400;
+		}
+
+		.row-hit.selected {
+			fill: transparent;
+		}
+
+		.hint {
+			display: none;
+		}
 	}
 </style>

@@ -36,7 +36,10 @@
 	<a href="/admin/umfragen/{survey.id}">← Zurück zur Umfrage</a>
 </p>
 
-<h1>{survey.title}</h1>
+<div class="title-row">
+	<h1>{survey.title}</h1>
+	<button type="button" onclick={() => window.print()}>Statistik drucken</button>
+</div>
 
 <p>
 	<span class="badge {survey.status}">{survey.status}</span>
@@ -51,22 +54,50 @@
 {#if ratingQuestions.length === 0}
 	<p class="muted">Diese Umfrage enthält keine Skalen-Fragen.</p>
 {:else}
-	<div class="mode-switch" role="group" aria-label="Diagrammart">
-		<button class:selected={plotMode === 'box'} onclick={() => (plotMode = 'box')}>Boxplot</button>
-		<button class:selected={plotMode === 'violin'} onclick={() => (plotMode = 'violin')}>
-			Violin
-		</button>
+	<div class="overview-area">
+		<div class="mode-switch" role="group" aria-label="Diagrammart">
+			<button class:selected={plotMode === 'box'} onclick={() => (plotMode = 'box')}>Boxplot</button>
+			<button class:selected={plotMode === 'violin'} onclick={() => (plotMode = 'violin')}>
+				Violin
+			</button>
+		</div>
+
+		<RatingOverview
+			questions={ratingQuestions}
+			mode={plotMode}
+			bind:selected={selectedQuestionId}
+		/>
 	</div>
 
-	<RatingOverview
-		questions={ratingQuestions}
-		mode={plotMode}
-		bind:selected={selectedQuestionId}
-	/>
+	<!--
+		Counts per rating for every question — print only. On screen the
+		histograms (click a question above) carry this information.
+	-->
+	<table class="rating-counts">
+		<thead>
+			<tr>
+				<th>Frage</th>
+				{#each Array.from({ length: 10 }, (_, i) => i + 1) as rating (rating)}
+					<th>{rating}</th>
+				{/each}
+			</tr>
+		</thead>
+		<tbody>
+			{#each ratingQuestions as question (question.id)}
+				{@const counts = new Map(question.distribution.map((d) => [d.rating, d.count]))}
+				<tr>
+					<td>{question.position + 1}. {question.prompt}</td>
+					{#each Array.from({ length: 10 }, (_, i) => i + 1) as rating (rating)}
+						<td>{counts.get(rating) ?? 0}</td>
+					{/each}
+				</tr>
+			{/each}
+		</tbody>
+	</table>
 
 	{#if selectedQuestion}
 		{@const stats = ratingStats(selectedQuestion.distribution)}
-		<div class="card">
+		<section class="card">
 			<h3>{selectedQuestion.position + 1}. {selectedQuestion.prompt}</h3>
 
 			{#if stats}
@@ -80,7 +111,7 @@
 
 			<RatingPlot distribution={selectedQuestion.distribution} />
 			<p class="muted legend">Anzahl der Antworten pro Bewertung (1–10)</p>
-		</div>
+		</section>
 	{/if}
 {/if}
 
@@ -115,6 +146,19 @@
 	.back {
 		margin-bottom: 0.5rem;
 		font-size: 0.9rem;
+	}
+
+	.title-row {
+		display: flex;
+		align-items: center;
+		justify-content: space-between;
+		gap: 1rem;
+		flex-wrap: wrap;
+		margin-bottom: 1rem;
+	}
+
+	.title-row h1 {
+		margin: 0;
 	}
 
 	.mode-switch {
@@ -154,6 +198,10 @@
 		font-size: 0.8rem;
 	}
 
+	.rating-counts {
+		display: none;
+	}
+
 	.text-answers {
 		display: flex;
 		flex-direction: column;
@@ -172,5 +220,83 @@
 		margin: 0 0 0.35rem;
 		white-space: pre-wrap;
 		overflow-wrap: break-word;
+	}
+
+	/*
+	 * Print: strip interactive elements, thick backgrounds and superfluous
+	 * borders; show the counts table instead of the on-screen histograms.
+	 */
+	@media print {
+		/* Light colors regardless of the active theme (dark text on white). */
+		:global(:root),
+		:global([data-theme='dark']) {
+			--bg: #fff !important;
+			--surface: #fff !important;
+			--text: #000 !important;
+			--muted: #555 !important;
+			--border: #bbb !important;
+			--accent-soft: #eef2fb !important;
+		}
+
+		/* Interactive elements off the page. */
+		:global(.admin-header),
+		:global(button),
+		.back {
+			display: none;
+		}
+
+		/*
+		 * The counts table replaces the on-screen histograms in the report.
+		 */
+		.rating-counts {
+			display: table;
+			break-inside: avoid;
+		}
+
+		.rating-counts th:not(:first-child),
+		.rating-counts td:not(:first-child) {
+			text-align: center;
+			width: 2.2rem;
+		}
+
+		/* Thick backgrounds and superfluous borders away, keep the plots. */
+		:global(body) {
+			background: none;
+		}
+
+		.card {
+			background: none;
+			border: none;
+			padding: 0;
+		}
+
+		/* Rating sections (plot + histogram) stay on one page … */
+		section.card {
+			break-inside: avoid;
+		}
+
+		/* … free-text cards may span pages: answers keep their outlines and
+		   are not split, but breaks between answers are allowed. */
+		.text-answer {
+			background: none;
+			break-inside: avoid;
+		}
+
+		.rating-counts,
+		.rating-counts th,
+		.rating-counts td {
+			border: none;
+		}
+
+		/* Badges keep their info, lose their colored backgrounds. */
+		:global(.badge) {
+			background: none;
+			border: 1px solid var(--border);
+			color: var(--text);
+		}
+
+		.overview-area {
+			break-inside: avoid;
+		}
 	}
 </style>
