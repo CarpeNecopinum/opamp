@@ -2,7 +2,7 @@ import { z } from 'zod';
 import { UniqueIntegrityConstraintViolationError } from 'slonik';
 import { roleSchema, type Role } from '#lib/schemas.ts';
 import { getPool, sql } from './db.ts';
-import { hashPassword } from './password.ts';
+import { hashPassword, verifyPassword } from './password.ts';
 
 const userRowSchema = z.object({
 	id: z.number(),
@@ -59,4 +59,37 @@ export async function createUser(input: {
 		}
 		throw error;
 	}
+}
+
+export type ChangePasswordResult = { ok: true } | { ok: false; error: string };
+
+/** Verifies the current password and updates it to the new one. */
+export async function changePassword(
+	userId: number,
+	currentPassword: string,
+	newPassword: string
+): Promise<ChangePasswordResult> {
+	const pool = await getPool();
+
+	const row = await pool.maybeOne(
+		sql.type(z.object({ passwordHash: z.string() }))`
+			SELECT password_hash AS "passwordHash"
+			FROM users
+			WHERE id = ${userId}
+		`
+	);
+
+	if (!row || !(await verifyPassword(currentPassword, row.passwordHash))) {
+		return { ok: false, error: 'Das aktuelle Passwort ist falsch.' };
+	}
+
+	const passwordHash = await hashPassword(newPassword);
+
+	await pool.query(sql.typeAlias('void')`
+		UPDATE users
+		SET password_hash = ${passwordHash}
+		WHERE id = ${userId}
+	`);
+
+	return { ok: true };
 }

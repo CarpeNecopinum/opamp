@@ -17,6 +17,7 @@
 			{#if data.user.role === 'root'}
 				<a href="/admin/benutzer">Benutzer</a>
 			{/if}
+			<a href="/admin/passwort">Passwort</a>
 			<span class="muted">{data.user.username}</span>
 			<form method="POST" action="/abmelden">
 				<button type="submit" class="secondary">Abmelden</button>
