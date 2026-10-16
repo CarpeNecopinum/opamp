@@ -1,5 +1,6 @@
 <script lang="ts">
 	import { page } from '$app/state';
+	import RatingSlider from '#lib/components/RatingSlider.svelte';
 	import { hasSubmitted } from '#lib/submissionGuard.ts';
 	import type { PageProps } from './$types';
 
@@ -67,18 +68,10 @@
 					</legend>
 
 					{#if question.type === 'agree_rating'}
-						<div class="rating">
-							{#each Array.from({ length: 10 }, (_, i) => i + 1) as value (value)}
-								<label class="rating-option">
-									<input type="radio" name="answer_{question.id}" value={value} />
-									<span>{value}</span>
-								</label>
-							{/each}
-						</div>
-						<div class="rating-hints">
-							<span>1 = stimme überhaupt nicht zu</span>
-							<span>10 = stimme vollständig zu</span>
-						</div>
+						<RatingSlider
+							name="answer_{question.id}"
+							label="{question.position + 1}. {question.prompt}"
+						/>
 					{:else}
 						<textarea name="answer_{question.id}" rows="4"></textarea>
 					{/if}
@@ -105,41 +98,5 @@
 	.question legend {
 		font-weight: 600;
 		padding: 0 0.4rem;
-	}
-
-	.rating {
-		display: flex;
-		gap: 0.35rem;
-		flex-wrap: wrap;
-	}
-
-	.rating-option {
-		display: flex;
-		flex-direction: column;
-		align-items: center;
-		gap: 0.2rem;
-		font-weight: 400;
-		border: 1px solid var(--border);
-		border-radius: var(--radius);
-		padding: 0.4rem 0.55rem;
-		cursor: pointer;
-	}
-
-	.rating-option:has(input:checked) {
-		border-color: var(--accent);
-		background: var(--accent-soft);
-	}
-
-	.rating-option input {
-		width: auto;
-		margin: 0;
-	}
-
-	.rating-hints {
-		display: flex;
-		justify-content: space-between;
-		margin-top: 0.4rem;
-		color: var(--muted);
-		font-size: 0.85rem;
 	}
 </style>

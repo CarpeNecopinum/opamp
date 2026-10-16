@@ -90,10 +90,14 @@ export async function createSurveyViaUI(
 	return token;
 }
 
-/** Fills one rating question (fieldset containing the prompt) with the given value. */
+/**
+ * Fills one rating question (fieldset containing the prompt) with the given
+ * value. Ratings are range sliders (1-10) with a live value display.
+ */
 export async function answerRating(page: Page, prompt: string, value: number): Promise<void> {
 	const fieldset = page.locator('fieldset.question').filter({ hasText: prompt });
-	await fieldset.locator(`input[type="radio"][value="${value}"]`).check();
+	await fieldset.locator('input[type="range"]').fill(String(value));
+	await expect(fieldset.locator('.rating-value')).toHaveText(String(value));
 }
 
 /** Fills one free-text question (fieldset containing the prompt). */

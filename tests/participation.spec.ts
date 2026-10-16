@@ -59,7 +59,8 @@ test.describe('participation (public, via token link)', () => {
 		await logout(page);
 
 		await page.goto(`/umfrage/${token}`);
-		// Only the optional free-text question is answered, the required rating is not.
+		// Only the optional free-text question is answered, the required rating
+		// slider is left untouched (sliders submit nothing until they are moved).
 		await answerFreeText(page, 'Was können wir verbessern?', 'Nur Freitext.');
 		await submitResponse(page);
 
@@ -67,6 +68,33 @@ test.describe('participation (public, via token link)', () => {
 
 		// Stays on the form, no thank-you redirect.
 		await expect(page).not.toHaveURL(/danke/);
+	});
+
+	test('rating sliders start unanswered and submit their value once moved', async ({ page }) => {
+		await login(page);
+
+		const token = await createSurveyViaUI(page, {
+			title: 'Slider-Test',
+			startsAt: '2026-10-07T09:00',
+			endsAt: '2026-10-20T18:00',
+			questions: [{ type: 'agree_rating', prompt: 'Wie sehr stimmst du dieser Meinung zu?' }]
+		});
+
+		await logout(page);
+
+		await page.goto(`/umfrage/${token}`);
+
+		const slider = page.locator('input[type="range"]');
+		// The thumb rests at the neutral midpoint on an unfilled track.
+		await expect(slider).toHaveValue('5');
+		await expect(page.locator('.rating-value')).toHaveText('–');
+		// Unanswered: the form field does not exist yet.
+		await expect(slider).not.toHaveAttribute('name');
+
+		await answerRating(page, 'Wie sehr stimmst du dieser Meinung zu?', 9);
+		await expect(slider).toHaveValue('9');
+		await expect(slider).toHaveAttribute('name', /^answer_\d+$/);
+		await expect(page.locator('.rating-value')).toHaveText('9');
 	});
 
 	test('shows a 404 for unguessable/unknown tokens', async ({ page }) => {

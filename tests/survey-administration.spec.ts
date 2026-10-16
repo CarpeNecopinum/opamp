@@ -6,7 +6,8 @@ import {
 	createSurveyUserViaUI,
 	login,
 	logout,
-	submitResponse
+	submitResponse,
+	waitForHydration
 } from './helpers';
 
 test.describe('survey administration', () => {
@@ -90,9 +91,12 @@ test.describe('survey administration', () => {
 
 		// Results are visible in the admin area.
 		await page.goto('/admin');
-		await page.getByRole('link', { name: 'Ergebnis-Test' }).click();
+		await page
+			.locator('tr', { hasText: 'Ergebnis-Test' })
+			.getByRole('link', { name: 'Statistik' })
+			.click();
+		await page.waitForURL(/\/statistik$/);
 
-		await expect(page.locator('h2', { hasText: 'Ergebnisse' })).toBeVisible();
 		await expect(page.locator('body')).toContainText('1 Antwort');
 		await expect(page.locator('body')).toContainText('8');
 		await expect(page.locator('body')).toContainText('Mehr Kaffee, bitte.');
